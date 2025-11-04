@@ -7,7 +7,6 @@ import { PromptSuggestions } from './PromptSuggestions';
 import { useChat } from '@/context/ChatContext';
 import { useChatStream } from '@/hooks/useChatStream';
 import { Message, FileAttachment, PromptTemplate } from '@/types';
-import { Bot } from 'lucide-react';
 
 export const ChatAgent: React.FC = () => {
   const { state, dispatch } = useChat();
@@ -42,7 +41,6 @@ export const ChatAgent: React.FC = () => {
         messages: [],
       };
       dispatch({ type: 'ADD_CONVERSATION', payload: newConversation });
-      // Note: Your ChatContext already sets currentConversation when adding
     } else {
       conversationId = currentConversation.id;
     }
@@ -83,12 +81,6 @@ export const ChatAgent: React.FC = () => {
         content, 
         files, 
         (assistantMessage: Message) => {
-          console.log('Stream update received:', {
-            messageId: assistantMessageId,
-            content: assistantMessage.content,
-            length: assistantMessage.content.length
-          });
-          
           // Update the assistant message content as it streams
           dispatch({
             type: 'UPDATE_MESSAGE',
@@ -125,33 +117,20 @@ export const ChatAgent: React.FC = () => {
   const shouldShowMessages = hasUserSentMessage || hasMessages;
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-white">
+    <div className="flex-1 flex flex-col h-full bg-gradient-to-br from-gray-50 to-blue-50/30">
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto">
         {!shouldShowMessages ? (
           <PromptSuggestions onPromptSelect={handlePromptSelect} />
         ) : (
           <div className="max-w-4xl mx-auto py-6 px-4">
-            {/* Debug info - uncomment to see what's happening */}
-            <div className="text-xs text-gray-500 mb-2 p-2 bg-yellow-50 rounded">
-              Debug Info:<br />
-              - Current Conversation: {currentConversation?.id}<br />
-              - Message Count: {currentConversation?.messages?.length || 0}<br />
-              - Is Streaming: {isStreaming.toString()}<br />
-              - Has User Sent Message: {hasUserSentMessage.toString()}
-            </div>
-            
             {/* Render all messages */}
             {currentConversation?.messages?.map((message, index) => (
-              <div key={message.id || index} className="mb-4">
-                <div className="text-xs text-gray-400 mb-1">
-                  Message {index}: {message.role} - {message.id} - Length: {message.content.length}
-                </div>
-                <MessageBubble 
-                  message={message}
-                  isStreaming={isStreaming && message.role === 'assistant' && index === currentConversation.messages.length - 1}
-                />
-              </div>
+              <MessageBubble 
+                key={message.id || index}
+                message={message}
+                isStreaming={isStreaming && message.role === 'assistant' && index === currentConversation.messages.length - 1}
+              />
             ))}
             
             <div ref={messagesEndRef} />
@@ -160,16 +139,18 @@ export const ChatAgent: React.FC = () => {
       </div>
 
       {/* Chat Input */}
-      <ChatInput
-        onSendMessage={handleSendMessage}
-        disabled={isStreaming}
-      />
+      <div className="bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl shadow-blue-300/10 rounded-t-2xl relative">
+          <ChatInput
+            onSendMessage={handleSendMessage}
+            disabled={isStreaming}
+          />
+      </div>
 
       {/* Footer */}
-      <footer className="border-t bg-gray-50 border-gray-200 py-2">
+      <footer className="bg-white py-2">
         <div className="text-center">
-          <p className="text-xs text-gray-500 italic">
-            Powered by Basha@AIProxy
+          <p className="text-xs text-gray-600 font-medium">
+            Powered by <span className="text-blue-600">Basha@AIProxy</span>
           </p>
         </div>
       </footer>
