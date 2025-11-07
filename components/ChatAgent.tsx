@@ -139,7 +139,7 @@ export const ChatAgent: React.FC = () => {
       </div>
 
       {/* Chat Input */}
-      <div className="bg-white/70 backdrop-blur-xl border border-white/40 shadow-2xl shadow-blue-300/10 rounded-t-2xl relative">
+      <div className="backdrop-blur-xl border border-white/40 shadow-2xl shadow-blue-300/10 rounded-t-2xl relative">
           <ChatInput
             onSendMessage={handleSendMessage}
             disabled={isStreaming}
@@ -147,7 +147,7 @@ export const ChatAgent: React.FC = () => {
       </div>
 
       {/* Footer */}
-      <footer className="bg-white py-2">
+      <footer className="bg-white py-2 shadow-lg ring-1 ring-blue-100 ring-inset">
         <div className="text-center">
           <p className="text-xs text-gray-600 font-medium">
             Powered by <span className="text-blue-600">Basha@AIProxy</span>

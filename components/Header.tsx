@@ -29,7 +29,7 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-gray-100 py-2 px-2 flex justify-between items-center border-b border-gray-300">
+    <header className="bg-gray-100 py-2 px-2 flex justify-between items-center border-b border-gray-300 border-2 shadow-lg ring-2 ring-blue-100 ring-inset">
       <div className="w-8 h-8 bg-blue-900 rounded-full flex items-center justify-center">
         <span className="text-white text-sm font-bold">AI</span>
       </div>

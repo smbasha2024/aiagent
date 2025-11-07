@@ -37,7 +37,7 @@ export const UserMenu: React.FC = () => {
   };
 
   return (
-    <div className={`bg-gray-50 border-r border-gray-200 h-full flex flex-col transition-all duration-300 ${
+    <div className={`bg-white/80 backdrop-blur-lg border-r border-gray-200/60 h-full flex flex-col transition-all duration-300 shadow-xl ${
       state.isSidebarCollapsed ? 'w-16' : 'w-64'
     }`}>
       {/* Top Section */}

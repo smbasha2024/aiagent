@@ -18,7 +18,7 @@ const promptCategories: { [key: string]: PromptTemplate[] } = {
     { id: '9', title: 'Heatmap', category: 'actions', content: 'Display compliance heatmap...', icon: '🗺️' },
     { id: '10', title: 'Reminders', category: 'actions', content: 'List upcoming reminders...', icon: '⏰' },
     { id: '11', title: 'Notices', category: 'actions', content: 'Show recent notices...', icon: '📢' },
-    {id: '12', title: 'Filings', category: 'actions', content: 'Access filing documents...', icon: '🗂️' },
+    { id: '12', title: 'Filings', category: 'actions', content: 'Access filing documents...', icon: '🗂️' },
   ],
   general: [
     { id: '13', title: 'GST Policy', category: 'general', content: 'Guide for GST policy...', icon: '🔧' },
@@ -39,7 +39,7 @@ export const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onPromptSe
     <div className="flex-1 overflow-y-auto p-4">
       <div className="max-w-4xl mx-auto space-y-4">
         {/* Compliance Prompts */}
-        <div className="bg-blue-50 rounded-xl p-4">
+        <div className="bg-blue-50 rounded-xl p-4 border-2 border-white shadow-lg ring-2 ring-blue-100 ring-inset">
           <div className="relative">
             <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
               {promptCategories.compliance.map(prompt => (
@@ -67,7 +67,7 @@ export const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onPromptSe
         </div>
 
         {/* My Actions */}
-        <div className="bg-green-50 rounded-xl p-4">
+        <div className="bg-green-50 rounded-xl p-4 border-2 border-white shadow-lg ring-2 ring-blue-100 ring-inset">
           <div className="relative">
             <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
               {promptCategories.actions.map(prompt => (
@@ -95,7 +95,7 @@ export const PromptSuggestions: React.FC<PromptSuggestionsProps> = ({ onPromptSe
         </div>
 
         {/* General */}
-        <div className="bg-yellow-50 rounded-xl p-4">
+        <div className="bg-yellow-50 rounded-xl p-4 border-2 border-white shadow-lg ring-2 ring-blue-100 ring-inset">
           <div className="relative">
             <div className="flex space-x-4 overflow-x-auto pb-2 scrollbar-hide">
               {promptCategories.general.map(prompt => (
