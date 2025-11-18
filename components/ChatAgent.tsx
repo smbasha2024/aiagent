@@ -15,6 +15,7 @@ export const ChatAgent: React.FC = () => {
   const [hasUserSentMessage, setHasUserSentMessage] = useState(false);
 
   const currentConversation = state.currentConversation;
+  const [inputValue, setInputValue] = useState('');
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -22,6 +23,9 @@ export const ChatAgent: React.FC = () => {
 
   useEffect(() => {
     scrollToBottom();
+    // When a new conversation is selected/created, reset the state
+    setHasUserSentMessage(false);
+    setInputValue(''); // Also reset input value
   }, [currentConversation?.messages]);
 
   const handleSendMessage = async (content: string, files: FileAttachment[] = []) => {
@@ -108,6 +112,9 @@ export const ChatAgent: React.FC = () => {
 
   const handlePromptSelect = (prompt: PromptTemplate) => {
     console.log('Prompt selected:', prompt);
+    // Set the prompt content to ChatInput by calling handleSendMessage
+    //handleSendMessage(prompt.content);
+    setInputValue(prompt.content);
   };
 
   // Safe check for messages
@@ -143,6 +150,8 @@ export const ChatAgent: React.FC = () => {
           <ChatInput
             onSendMessage={handleSendMessage}
             disabled={isStreaming}
+            inputValue={inputValue}
+            onInputChange={setInputValue}
           />
       </div>
 

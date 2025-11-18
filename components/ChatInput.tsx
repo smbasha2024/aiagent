@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Send, Plus, Brain, Search } from 'lucide-react';
 import { FileAttachment } from '@/types';
 import { useChatStream } from '@/hooks/useChatStream';
@@ -9,10 +9,17 @@ import { useChat } from '@/context/ChatContext';
 interface ChatInputProps {
   onSendMessage: (message: string, files: FileAttachment[]) => void;
   disabled?: boolean;
+  inputValue?: string;
+  onInputChange?: (value: string) => void;
 }
 
-export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = false }) => {
-  const [message, setMessage] = useState('');
+export const ChatInput: React.FC<ChatInputProps> = ({ 
+    onSendMessage, 
+    disabled = false,
+    inputValue,
+    onInputChange
+  }) => {
+  const [message, setMessage] = useState(inputValue || '');
   const [files, setFiles] = useState<FileAttachment[]>([]);
   const [isDeepThink, setIsDeepThink] = useState(false);
   const [isSearch, setIsSearch] = useState(true);
@@ -20,6 +27,23 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const { state } = useChat();
+
+  // Sync the external inputValue with internal state
+  useEffect(() => {
+    if (inputValue !== undefined) {
+      setMessage(inputValue);
+      
+      // Also update textarea height when external value changes
+      if (textareaRef.current && inputValue) {
+        const lineCount = inputValue.split('\n').length;
+        const newRows = Math.min(Math.max(lineCount, 1), 6);
+        setTextareaRows(newRows);
+        
+        textareaRef.current.style.height = 'auto';
+        textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 144) + 'px';
+      }
+    }
+  }, [inputValue]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +62,15 @@ export const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, disabled = 
   };
 
   const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    /*
+      const newValue = e.target.value;
+      setMessage(newValue);
+      
+      // Call the external onChange handler if provided
+      if (onInputChange) {
+        onInputChange(newValue);
+      }
+    */
     setMessage(e.target.value);
     
     // Calculate the number of lines

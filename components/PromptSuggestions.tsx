@@ -5,14 +5,14 @@ import { PromptTemplate } from '@/types';
 
 const promptCategories: { [key: string]: PromptTemplate[] } = {
   compliance: [
-    { id: '1', title: 'Boilerplate Act', category: 'compliance', content: 'Explain the Boilerplate Act...', icon: '📄' },
-    { id: '2', title: 'GST Act', category: 'compliance', content: 'Explain GST Act provisions...', icon: '💰' },
+    { id: '1', title: 'Updates Applicable', category: 'compliance', content: 'In the context of Daily Updates from the regulatory bodies, list down all tax related amendments happened since 5 years.', icon: '📄' },
+    { id: '2', title: 'Labor Laws Update', category: 'compliance', content: 'Explain GST Act provisions...', icon: '💰' },
     { id: '3', title: 'Corporate Tax Act', category: 'compliance', content: 'Corporate tax guidelines...', icon: '🏢' },
     { id: '4', title: 'Income Tax Act', category: 'compliance', content: 'Details about Income Tax Act...', icon: '💵' }, 
     { id: '5', title: 'Labor Laws', category: 'compliance', content: 'Overview of Labor Laws...', icon: '👷' },
   ],
   actions: [
-    { id: '6', title: 'Tax Filings', category: 'actions', content: 'Assist with tax filings...', icon: '🧾' },
+    { id: '6', title: 'Daily Updates', category: 'actions', content: 'Refer all SEBI, RBI and other regulatory body sites. Pull out all compliances updates that are applicable for IT Industry and summary of amendments for 3 years.', icon: '🧾' },
     { id: '7', title: 'Pending Compliances', category: 'actions', content: 'Show pending compliances...', icon: '⏳' },
     { id: '8', title: 'Dashboard', category: 'actions', content: 'Show compliance dashboard...', icon: '📊' },
     { id: '9', title: 'Heatmap', category: 'actions', content: 'Display compliance heatmap...', icon: '🗺️' },

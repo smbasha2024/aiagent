@@ -16,7 +16,11 @@ const mockHistory = [
   { id: '2', title: 'Corporate Tax Discussion', createdAt: new Date() },
 ];
 
-const handleNewChat = () => {
+  
+export const UserMenu: React.FC = () => {
+  const { state, dispatch } = useChat();
+
+  const handleNewChat = () => {
     const newConversation = {
       id: Date.now().toString(),
       title: 'New Chat',
@@ -25,11 +29,6 @@ const handleNewChat = () => {
     };
     dispatch({ type: 'ADD_CONVERSATION', payload: newConversation });
   };
-  
-export const UserMenu: React.FC = () => {
-  const { state, dispatch } = useChat();
-
-  
 
   const handlePromptClick = (prompt: { title: string; content?: string }) => {
     // This would pre-fill the chat input
@@ -48,7 +47,7 @@ export const UserMenu: React.FC = () => {
             {!state.isSidebarCollapsed && (
               <button
                 onClick={handleNewChat}
-                className="px-15 py-2 rounded-sm bg-gray-400 hover:bg-gray-700 text-white transition-colors text-sm font-medium"
+                className="px-15 py-2 rounded-sm bg-gray-400 hover:bg-gray-700 cursor-pointer text-white transition-colors text-sm font-medium"
                 title="New Chat"
               >
                 <span className="inline-flex items-center justify-center w-6 h-6 border border-white-500 rounded-full text-white-700">+</span>&nbsp; New Chat

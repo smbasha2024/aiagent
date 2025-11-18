@@ -10,7 +10,8 @@ type ChatAction =
   | { type: 'ADD_MESSAGE'; payload: { conversationId: string; message: Message } }
   | { type: 'UPDATE_MESSAGE'; payload: { conversationId: string; messageId: string; content: string } }
   | { type: 'TOGGLE_SIDEBAR' }
-  | { type: 'DELETE_CONVERSATION'; payload: string };
+  | { type: 'DELETE_CONVERSATION'; payload: string }
+  | { type: 'SHOW_PROMPT_SUGGESTIONS'; payload: boolean }; // Add this
 
 interface ChatContextType {
   state: ChatState;
@@ -23,6 +24,7 @@ const initialState: ChatState = {
   isStreaming: false,
   user: null,
   isSidebarCollapsed: false,
+  showPromptSuggestions: false, // Add this
 };
 
 const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
@@ -35,6 +37,7 @@ const chatReducer = (state: ChatState, action: ChatAction): ChatState => {
         ...state,
         conversations: [action.payload, ...state.conversations],
         currentConversation: action.payload,
+        showPromptSuggestions: true, // Show suggestions when new conversation is added
       };
     
     case 'SET_CURRENT_CONVERSATION':

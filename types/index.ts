@@ -43,4 +43,5 @@ export interface ChatState {
   isStreaming: boolean;
   user: User | null;
   isSidebarCollapsed: boolean;
+  showPromptSuggestions: boolean;
 }

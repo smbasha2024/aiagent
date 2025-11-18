@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, {useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { User, Bot } from 'lucide-react';
+import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Message } from '@/types';
 import { FileText } from "lucide-react";
 import remarkGfm from 'remark-gfm';
@@ -12,10 +13,21 @@ import remarkGfm from 'remark-gfm';
 interface MessageBubbleProps {
   message: Message;
   isStreaming?: boolean;
+  feedback?: 'thumbsUp' | 'thumbsDown' | null;
 }
+
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isStreaming = false }) => {
   const isUser = message.role === 'user';
+
+  // Add state for feedback in your component
+  const [feedback, setFeedback] = useState<'thumbsUp' | 'thumbsDown' | null>(null);
+
+  const handleFeedback = (type: 'thumbsUp' | 'thumbsDown') => {
+    setFeedback(type);
+    // You can also send this feedback to your backend
+    console.log(`User gave ${type} feedback for message:`, message.id);
+  };
 
   // Custom components for ReactMarkdown with enhanced styling
   const MarkdownComponents = {
@@ -31,7 +43,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isStreami
             <div className="code-header bg-gray-800 text-gray-200 px-4 py-2 text-sm font-mono flex justify-between items-center">
               <span className="font-semibold">{language}</span>
               <button 
-                className="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded transition-colors duration-200"
+                className="text-xs bg-gray-700 hover:bg-gray-600 cursor-pointer px-2 py-1 rounded transition-colors duration-200"
                 onClick={() => navigator.clipboard.writeText(codeContent)}
               >
                 Copy
@@ -201,7 +213,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isStreami
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-6`}>
-      <div className={`flex max-w-[85%] ${isUser ? 'flex-row-reverse' : 'flex-row'} items-start space-x-3`}>
+      <div className={`flex max-w-[90%] ${isUser ? 'flex-row-reverse' : 'flex-row'} items-start space-x-3`}>
         {/* Avatar */}
         <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center shadow-sm ${
           isUser ? 'bg-gradient-to-br from-blue-500 to-blue-600' : 'bg-gradient-to-br from-gray-500 to-gray-600'
@@ -264,9 +276,37 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isStreami
           </div>
           
           {/* Timestamp */}
-          <div className={`text-xs mt-3 ${isUser ? 'text-blue-100' : 'text-gray-500'}`}>
-            {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-          </div>
+          {!isUser && (
+            <div className={`text-xs mt-3 ${isUser ? 'text-blue-100' : 'text-gray-500'}`}>
+              {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {' '}
+              <button className={`p-1 rounded transition-colors ${
+                  feedback === 'thumbsUp' 
+                    ? 'bg-green-100 text-green-600' 
+                    : 'hover:bg-gray-200 text-gray-500 cursor-pointer'
+                }`}
+                onClick={() => handleFeedback('thumbsUp')}
+                title="Good response"
+              >
+                {' '}
+                <ThumbsUp className="w-3 h-3" />
+              </button>
+
+              <button className={`p-1 rounded transition-colors ${
+                  feedback === 'thumbsDown' 
+                    ? 'bg-red-100 text-red-600' 
+                    : 'hover:bg-gray-200 text-gray-500 cursor-pointer'
+                }`}
+                onClick={() => handleFeedback('thumbsDown')}
+                title="Bad response"
+              >
+                {' '}
+                <ThumbsDown className="w-3 h-3" />
+              </button>
+            </div>
+          )}
+
+          
         </div>
       </div>
     </div>

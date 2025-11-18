@@ -42,7 +42,7 @@ export const Header: React.FC = () => {
       <div className={`flex justify-end space-x-3 ${!state.isSidebarCollapsed ? 'w-34' : 'w-12'}`}>
         <button
             onClick={() => dispatch({ type: 'TOGGLE_SIDEBAR' })}
-            className="w-10 h-8 flex items-center justify-center rounded-lg text-white bg-gray-500 hover:bg-gray-700 hover:text-white transition-colors"
+            className="w-10 h-8 flex items-center justify-center rounded-lg text-white bg-gray-500 hover:bg-gray-700 cursor-pointer hover:text-white transition-colors"
           >
             
             {state.isSidebarCollapsed ? (
@@ -78,7 +78,7 @@ export const Header: React.FC = () => {
       <div className="flex-grow-[1] flex justify-end">
         <button
           onClick={handleUserIconClick}
-          className="p-2 rounded-full bg-blue-100 hover:bg-blue-700 hover:text-white transition-colors"
+          className="p-2 rounded-full bg-blue-100 hover:bg-blue-700 cursor-pointer hover:text-white transition-colors"
         >
           <User className="w-6 h-6 text-gray-600 hover:text-white" />
         </button>
