@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useState } from 'react';
+import React, {useState, useRef, useEffect, useLayoutEffect} from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -9,6 +9,8 @@ import { ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Message } from '@/types';
 import { FileText } from "lucide-react";
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw'; // Add this import
+import DOMPurify from 'dompurify';
 
 interface MessageBubbleProps {
   message: Message;
@@ -27,6 +29,83 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isStreami
     setFeedback(type);
     // You can also send this feedback to your backend
     console.log(`User gave ${type} feedback for message:`, message.id);
+  };
+
+  // Function to detect if content contains HTML
+  const containsHTML = (content: string) => {
+    return /<[^>]*>/.test(content);
+  };
+
+  // Shadow DOM Component
+  const ShadowDOMRenderer = ({ html }: { html: string }) => {
+    const shadowHostRef = useRef<HTMLDivElement>(null);
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    useLayoutEffect(() => {
+      if (shadowHostRef.current && !shadowHostRef.current.shadowRoot) {
+        const shadowRoot = shadowHostRef.current.attachShadow({ mode: 'open' });
+        
+        // Add basic styles for better appearance
+        const style = document.createElement('style');
+        style.textContent = `
+          :host {
+            display: block;
+            width: 100%;
+            min-height: 200px;
+          }
+          body, html {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, sans-serif;
+            height: 100%;
+          }
+          * {
+            box-sizing: border-box;
+          }
+        `;
+        
+        shadowRoot.appendChild(style);
+        
+        // Create a container for the content
+        const container = document.createElement('div');
+        container.innerHTML = html;
+        shadowRoot.appendChild(container);
+        
+        // Mark as loaded to trigger any animations/transitions
+        setTimeout(() => setIsLoaded(true), 50);
+      }
+    }, [html]);
+
+    return (
+      <div 
+        ref={shadowHostRef} 
+        className={`w-full min-h-[200px] transition-opacity duration-300 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+    );
+  };
+
+  // Function to render HTML content safely
+  const renderHTMLContent = (content: string) => {
+    if (containsHTML(content)) {
+      const sanitizedContent = DOMPurify.sanitize(content, {
+        ADD_TAGS: ['iframe', 'script'],
+        ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'scrolling']
+      });
+      
+      return (
+        <div className="html-content-container my-4 p-4 border border-gray-300 rounded-lg bg-white">
+          <div className="text-xs text-gray-500 mb-2 font-medium">
+            HTML Content Preview
+          </div>
+          <div className="relative min-h-[200px]">
+            <ShadowDOMRenderer html={sanitizedContent} />
+          </div>
+        </div>
+      );
+    }
+    return null;
   };
 
   // Custom components for ReactMarkdown with enhanced styling
@@ -91,15 +170,17 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isStreami
     // Tables with proper alignment and styling
     // Enhanced tables with better styling
     table: ({ children }: any) => (
-      <div className="table-container my-6 overflow-x-auto rounded-2xl border border-gray-200/80 shadow-lg bg-white/95 backdrop-blur-sm">
-        <table className="markdown-table min-w-full">
+      <div className="table-container rounded-sm my-6 overflow-x-auto  border border-gray-200/80 shadow-lg bg-white/95 backdrop-blur-sm">
+      
+        <table className="markdown-table min-w-full ">
           {children}
         </table>
       </div>
     ),
 
     th: ({ children }: any) => (
-      <th className="table-header bg-gradient-to-r from-blue-50/80 to-gray-50/80 px-6 py-4 text-left text-sm font-bold text-gray-800 uppercase tracking-wider border-b border-gray-200/60">
+      <th className="table-header px-4 py-3 text-left text-sm font-bold text-gray-800 uppercase tracking-wider border-b border-gray-300/60">
+      
         {children}
       </th>
     ),
@@ -111,7 +192,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isStreami
     ),
 
     tr: ({ children }: any) => (
-      <tr className="hover:bg-blue-50/30 transition-all duration-200 even:bg-gray-50/30">
+      <tr className="hover:bg-blue-50/30 transition-all duration-200 even:bg-gray-100/50">
         {children}
       </tr>
     ),
@@ -266,12 +347,18 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isStreami
                 {message.content}
               </div>
             ) : (
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={MarkdownComponents}
-              >
-                {message.content}
-              </ReactMarkdown>
+              <>
+              {/* Try to render as HTML first, fallback to markdown */}
+              {renderHTMLContent(message.content) || (
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeRaw]} // Add rehypeRaw here
+                  components={MarkdownComponents}
+                >
+                  {message.content}
+                </ReactMarkdown>
+              )}
+              </>
             )}
           </div>
           
