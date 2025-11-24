@@ -33,10 +33,12 @@ export class ChatAPI {
         stream: true
       };
 
-      const response = await fetch(`${API_BASE_URL}/api/generate`, {
+      const response = await fetch(`${API_BASE_URL}/aiagents/generate`, {
         method: 'POST',
         headers: {
+          'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'X-API-KEY': 'QUlQcm94eXNTZXJ2ZXJfRW1haWxfQVBJX0tleTpBbGxhaDc4NiM=',
         },
         body: JSON.stringify(payload),
       });

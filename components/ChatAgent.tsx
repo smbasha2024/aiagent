@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
 import { PromptSuggestions } from './PromptSuggestions';
@@ -17,18 +17,23 @@ export const ChatAgent: React.FC = () => {
   const currentConversation = state.currentConversation;
   const [inputValue, setInputValue] = useState('');
 
-  const scrollToBottom = () => {
+  // Memoize scrollToBottom to prevent recreating on every render
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, []);
 
+  // Separate effects to prevent infinite loops
   useEffect(() => {
     scrollToBottom();
-    // When a new conversation is selected/created, reset the state
-    setHasUserSentMessage(false);
-    setInputValue(''); // Also reset input value
-  }, [currentConversation?.messages]);
+  }, [currentConversation?.messages, scrollToBottom]); // Only scroll when messages change
 
-  const handleSendMessage = async (content: string, files: FileAttachment[] = []) => {
+  // Reset state when conversation changes (not when messages change)
+  useEffect(() => {
+    setHasUserSentMessage(false);
+    setInputValue('');
+  }, [currentConversation?.id]); // Only reset when conversation ID changes
+
+  const handleSendMessage = useCallback(async (content: string, files: FileAttachment[] = []) => {
     if (!content.trim()) return;
 
     setHasUserSentMessage(true);
@@ -86,6 +91,7 @@ export const ChatAgent: React.FC = () => {
         files, 
         (assistantMessage: Message) => {
           // Update the assistant message content as it streams
+          
           dispatch({
             type: 'UPDATE_MESSAGE',
             payload: {
@@ -108,14 +114,14 @@ export const ChatAgent: React.FC = () => {
         },
       });
     }
-  };
+  }, [currentConversation, dispatch, streamMessage]);
 
-  const handlePromptSelect = (prompt: PromptTemplate) => {
+  const handlePromptSelect = useCallback((prompt: PromptTemplate) => {
     console.log('Prompt selected:', prompt);
     // Set the prompt content to ChatInput by calling handleSendMessage
     //handleSendMessage(prompt.content);
     setInputValue(prompt.content);
-  };
+  }, []);
 
   // Safe check for messages
   const hasMessages = currentConversation?.messages && currentConversation.messages.length > 0;
