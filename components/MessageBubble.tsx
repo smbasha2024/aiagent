@@ -33,7 +33,29 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isStreami
 
   // Function to detect if content contains HTML
   const containsHTML = (content: string) => {
-    return /<[^>]*>/.test(content);
+    //return /<[^>]*>/.test(content);
+
+    // Check for common HTML patterns
+    /*
+    const htmlPatterns = [
+      // Opening tags (with optional attributes)
+      /<([a-z][a-z0-9]*)\b[^>]*>/i,
+      // Closing tags
+      /<\/([a-z][a-z0-9]*)\b[^>]*>/i,
+      // Self-closing tags
+      /<([a-z][a-z0-9]*)\b[^>]*\/>/i,
+      // HTML comments
+      /<!--[\s\S]*?-->/,
+      // HTML entities (though these might appear in plain text too)
+      /&[a-z]+;/i,
+      // DOCTYPE declaration
+      /<!DOCTYPE\s+html/i
+    ];
+
+    // Check for any HTML pattern
+    return htmlPatterns.some(pattern => pattern.test(content));
+    */
+    return false;
   };
 
   // Shadow DOM Component
