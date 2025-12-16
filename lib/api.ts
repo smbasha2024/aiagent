@@ -33,7 +33,7 @@ export class ChatAPI {
         stream: true
       };
 
-      const response = await fetch(`${API_BASE_URL}/aiagents/generate`, {
+      const response = await fetch(`${API_BASE_URL}/aiagents/chat`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
